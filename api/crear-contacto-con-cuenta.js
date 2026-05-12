@@ -76,13 +76,20 @@ export default async function handler(req, res) {
         }
       );
 
-      const cuentaData = await buscarCuenta.json();
+     let cuentaData = {};
 
-      if (cuentaData.data && cuentaData.data.length > 0) {
+const textoBusqueda = await buscarCuenta.text();
 
-        accountId = cuentaData.data[0].id;
+if (textoBusqueda) {
+  cuentaData = JSON.parse(textoBusqueda);
+}
 
-      }
+if (
+  cuentaData.data &&
+  cuentaData.data.length > 0
+) {
+  accountId = cuentaData.data[0].id;
+}
 
     }
 
