@@ -14,9 +14,12 @@ async function obtenerAccessToken() {
 
   const datos = await respuesta.json();
 
-  if (!datos.access_token) {
-    throw new Error("No se pudo obtener access_token de Zoho");
-  }
+ if (!datos.access_token) {
+  return {
+    error: true,
+    zoho_response: datos
+  };
+}
 
   return datos.access_token;
 }
@@ -37,7 +40,16 @@ export default async function handler(req, res) {
       });
     }
 
-    const accessToken = await obtenerAccessToken();
+   const tokenResult = await obtenerAccessToken();
+
+if (tokenResult.error) {
+  return res.status(500).json({
+    error: "No se pudo obtener access_token de Zoho",
+    zoho_response: tokenResult.zoho_response
+  });
+}
+
+const accessToken = tokenResult;
 
     const respuestaZoho = await fetch(
       "https://www.zohoapis.com/crm/v2/Contacts",
