@@ -18,7 +18,15 @@ export default async function handler(req, res) {
     });
 
     const tokenData = await tokenResponse.json();
-    const accessToken = tokenData.access_token;
+
+if (!tokenData.access_token) {
+  return res.status(500).json({
+    error: "Could not obtain Zoho access token",
+    zoho_response: tokenData
+  });
+}
+
+const accessToken = tokenData.access_token;
 
     const zohoResponse = await fetch("https://www.zohoapis.com/crm/v2/settings/modules", {
       headers: {
